@@ -325,12 +325,87 @@ h1, h2, h3 {
   width: 100%;
   height: 100%;
   display: block;
+  z-index: 0;
+}
+
+.stage-rail {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.45rem;
+}
+
+.stage-rail-btn {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(10, 11, 15, 0.55);
+  backdrop-filter: blur(10px);
+  color: var(--muted);
+  border-radius: 16px;
+  padding: 0.7rem 0.4rem 0.55rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: border-color 0.35s ease, color 0.35s ease, background 0.35s ease, transform 0.35s var(--ease), box-shadow 0.35s ease;
+}
+
+.stage-rail-btn .stage-icon {
+  width: 2.6rem;
+  height: 2.6rem;
+  color: inherit;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.45s var(--ease), color 0.35s ease, background 0.35s ease, box-shadow 0.45s ease, border-color 0.35s ease;
+}
+
+.stage-rail-btn .stage-icon svg {
+  width: 1.45rem;
+  height: 1.45rem;
+}
+
+.stage-rail-btn.is-active {
+  color: var(--ink);
+  border-color: rgba(61, 255, 168, 0.45);
+  background: rgba(61, 255, 168, 0.1);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25), 0 0 24px rgba(61, 255, 168, 0.18);
+  transform: translateY(-2px);
+}
+
+.stage-rail-btn.is-active .stage-icon {
+  color: var(--accent);
+  background: var(--accent-dim);
+  border-color: rgba(61, 255, 168, 0.35);
+  box-shadow: 0 0 22px rgba(61, 255, 168, 0.35);
+  animation: icon-pop 0.55s var(--ease);
+}
+
+.stage-rail-btn:hover {
+  color: var(--ink);
+  border-color: rgba(255, 255, 255, 0.22);
 }
 
 .stage-stack {
   position: absolute;
-  inset: 12%;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  top: 38%;
   perspective: 900px;
+  z-index: 2;
 }
 
 .stage-card {
@@ -338,7 +413,7 @@ h1, h2, h3 {
   inset: 0;
   border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(12, 14, 20, 0.72);
+  background: rgba(12, 14, 20, 0.78);
   backdrop-filter: blur(12px);
   padding: 1.35rem 1.4rem;
   display: flex;
@@ -359,16 +434,14 @@ h1, h2, h3 {
 
 .stage-card .stage-index {
   position: absolute;
-  top: 1.2rem;
-  right: 1.3rem;
+  top: 1rem;
+  right: 1.15rem;
   font-family: var(--display);
   font-size: 2.4rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.08);
   letter-spacing: -0.06em;
 }
-
-.stage-card .tag { margin-bottom: 0.5rem; }
 
 .stage-card h3 {
   margin: 0 0 0.35rem;
@@ -379,33 +452,13 @@ h1, h2, h3 {
   margin: 0;
   color: var(--muted);
   font-size: 0.92rem;
-  max-width: 22ch;
+  max-width: 28ch;
 }
 
-.stage-dots {
-  position: absolute;
-  left: 50%;
-  bottom: 1rem;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 0.4rem;
-  z-index: 2;
-}
-
-.stage-dots button {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  border: 0;
-  padding: 0;
-  background: rgba(255, 255, 255, 0.25);
-  cursor: pointer;
-  transition: width 0.35s var(--ease), background 0.35s ease;
-}
-
-.stage-dots button[aria-current="true"] {
-  width: 22px;
-  background: var(--accent);
+@keyframes icon-pop {
+  0% { transform: scale(0.72); }
+  60% { transform: scale(1.12); }
+  100% { transform: scale(1); }
 }
 
 .section {
@@ -727,4 +780,8 @@ h1, h2, h3 {
     transform: none !important;
   }
   .stage-card { opacity: 1; transform: none; }
+  .stage-rail-btn.is-active .stage-icon {
+    animation: none !important;
+    transform: none !important;
+  }
 }

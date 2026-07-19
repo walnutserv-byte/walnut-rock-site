@@ -82,23 +82,30 @@ function initHeroStage() {
   if (!stage || !canvas) return;
 
   const cards = [...stage.querySelectorAll(".stage-card")];
-  const dots = [...stage.querySelectorAll(".stage-dots button")];
+  const rails = [...stage.querySelectorAll(".stage-rail-btn")];
   let idx = 0;
   let timer;
+  let stepProgress = 0;
 
   const show = (n) => {
     idx = (n + cards.length) % cards.length;
+    stepProgress = 0;
+    stage.dataset.step = String(idx);
     cards.forEach((c, i) => c.classList.toggle("active", i === idx));
-    dots.forEach((d, i) => d.setAttribute("aria-current", i === idx ? "true" : "false"));
+    rails.forEach((d, i) => {
+      const on = i === idx;
+      d.classList.toggle("is-active", on);
+      d.setAttribute("aria-current", on ? "true" : "false");
+    });
   };
 
   const next = () => show(idx + 1);
   const restart = () => {
     clearInterval(timer);
-    timer = setInterval(next, 3200);
+    timer = setInterval(next, 3600);
   };
 
-  dots.forEach((d, i) => {
+  rails.forEach((d, i) => {
     d.addEventListener("click", () => {
       show(i);
       restart();
@@ -138,55 +145,106 @@ function initHeroStage() {
     { passive: true }
   );
 
-  const ribbons = [
-    { amp: 42, speed: 0.7, hue: "61,255,168", thick: 1.4 },
-    { amp: 28, speed: 1.1, hue: "122,162,255", thick: 1.1 },
-    { amp: 36, speed: 0.85, hue: "255,255,255", thick: 0.8 },
+  const palettes = [
+    { a: "61,255,168", b: "122,162,255" },
+    { a: "122,162,255", b: "200,170,255" },
+    { a: "61,255,168", b: "255,210,120" },
   ];
 
   const draw = () => {
-    t += 0.008;
+    t += 0.01;
+    stepProgress = Math.min(1, stepProgress + 0.012);
     ctx.clearRect(0, 0, w, h);
+    const pal = palettes[idx] || palettes[0];
 
     const g = ctx.createRadialGradient(
-      w * (0.35 + mx * 0.3),
-      h * (0.3 + my * 0.25),
-      20,
+      w * (0.28 + mx * 0.35 + idx * 0.08),
+      h * (0.42 + my * 0.2),
+      10,
       w * 0.5,
-      h * 0.5,
-      w * 0.7
+      h * 0.55,
+      w * 0.75
     );
-    g.addColorStop(0, "rgba(61,255,168,0.14)");
-    g.addColorStop(0.45, "rgba(122,162,255,0.08)");
+    g.addColorStop(0, `rgba(${pal.a},${0.18 + stepProgress * 0.1})`);
+    g.addColorStop(0.5, `rgba(${pal.b},0.1)`);
     g.addColorStop(1, "rgba(0,0,0,0)");
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, w, h);
 
-    ribbons.forEach((rib, ri) => {
+    // orbiting nodes — denser / different path per step
+    const count = 10 + idx * 4;
+    for (let i = 0; i < count; i++) {
+      const ang = t * (0.55 + idx * 0.15) + (i / count) * Math.PI * 2;
+      const rad = (0.18 + (i % 4) * 0.07) * Math.min(w, h);
+      const cx = w * (0.5 + (mx - 0.5) * 0.12);
+      const cy = h * (0.52 + (my - 0.5) * 0.1);
+      const px = cx + Math.cos(ang) * rad;
+      const py = cy + Math.sin(ang * (1 + idx * 0.2)) * rad * 0.72;
       ctx.beginPath();
-      for (let x = 0; x <= w; x += 6) {
-        const n =
-          Math.sin(x * 0.012 + t * rib.speed + ri) * rib.amp +
-          Math.sin(x * 0.004 + t * 0.6 + ri * 2) * (rib.amp * 0.35) +
-          (my - 0.5) * 40;
-        const y = h * (0.38 + ri * 0.12) + n + (mx - 0.5) * 18;
-        if (x === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      ctx.arc(px, py, 1.6 + (i % 3), 0, Math.PI * 2);
+      ctx.fillStyle = i % 2 ? `rgba(${pal.a},0.7)` : `rgba(${pal.b},0.55)`;
+      ctx.fill();
+      if (i % 3 === 0) {
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(px, py);
+        ctx.strokeStyle = `rgba(${pal.a},0.12)`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
       }
-      ctx.strokeStyle = `rgba(${rib.hue},${ri === 2 ? 0.18 : 0.45})`;
-      ctx.lineWidth = rib.thick;
-      ctx.stroke();
-    });
+    }
 
-    for (let i = 0; i < 18; i++) {
-      const px = ((Math.sin(t * 0.4 + i * 1.7) + 1) / 2) * w;
-      const py = ((Math.cos(t * 0.55 + i * 1.1) + 1) / 2) * h;
-      const r = 1.2 + (i % 3);
+    // step-specific motif
+    ctx.save();
+    ctx.translate(w * 0.5, h * 0.55);
+    ctx.strokeStyle = `rgba(${pal.a},${0.35 + stepProgress * 0.25})`;
+    ctx.lineWidth = 1.6;
+    if (idx === 0) {
+      // expanding search rings
+      for (let r = 0; r < 3; r++) {
+        const rr = 28 + r * 22 + Math.sin(t * 2 + r) * 4;
+        ctx.beginPath();
+        ctx.arc(0, 0, rr * stepProgress, 0, Math.PI * 2);
+        ctx.stroke();
+      }
       ctx.beginPath();
-      ctx.arc(px, py, r, 0, Math.PI * 2);
-      ctx.fillStyle = i % 2 ? "rgba(61,255,168,0.55)" : "rgba(122,162,255,0.45)";
+      ctx.moveTo(18, 18);
+      ctx.lineTo(42, 42);
+      ctx.stroke();
+    } else if (idx === 1) {
+      // blueprint grid
+      const s = 22;
+      for (let x = -66; x <= 66; x += s) {
+        ctx.globalAlpha = 0.25 + stepProgress * 0.35;
+        ctx.beginPath();
+        ctx.moveTo(x, -55);
+        ctx.lineTo(x, 55);
+        ctx.stroke();
+      }
+      for (let y = -55; y <= 55; y += s) {
+        ctx.beginPath();
+        ctx.moveTo(-66, y);
+        ctx.lineTo(66, y);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      ctx.strokeRect(-40 * stepProgress, -28 * stepProgress, 80 * stepProgress, 56 * stepProgress);
+    } else {
+      // launch burst
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * Math.PI * 2 + t;
+        const len = (30 + (i % 3) * 12) * stepProgress;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(a) * 8, Math.sin(a) * 8);
+        ctx.lineTo(Math.cos(a) * len, Math.sin(a) * len);
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.arc(0, 0, 10 + Math.sin(t * 3) * 2, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${pal.a},0.35)`;
       ctx.fill();
     }
+    ctx.restore();
 
     if (!reduce) requestAnimationFrame(draw);
   };

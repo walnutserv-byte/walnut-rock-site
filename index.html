@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css?v=3" />
 </head>
 <body>
   <div class="progress" aria-hidden="true"></div>
@@ -48,32 +48,55 @@
             <a class="btn btn-ghost" href="about.html">How we work</a>
           </div>
         </div>
-        <aside class="hero-stage reveal" aria-label="How we work">
+        <aside class="hero-stage reveal" aria-label="How we work" data-step="0">
           <canvas class="hero-canvas" aria-hidden="true"></canvas>
+          <div class="stage-rail" role="tablist" aria-label="Process steps">
+            <button type="button" class="stage-rail-btn is-active" aria-label="Discover" aria-current="true" data-step="0">
+              <span class="stage-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none">
+                  <circle cx="22" cy="22" r="11" stroke="currentColor" stroke-width="2.4"/>
+                  <path d="M30.5 30.5 39 39" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+                  <circle cx="22" cy="22" r="3.8" fill="currentColor"/>
+                </svg>
+              </span>
+              <span>Discover</span>
+            </button>
+            <button type="button" class="stage-rail-btn" aria-label="Craft" data-step="1">
+              <span class="stage-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none">
+                  <path d="M12 34V14h18l6 6v14H12Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+                  <path d="M30 14v6h6" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+                  <path d="M18 24h12M18 30h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span>Craft</span>
+            </button>
+            <button type="button" class="stage-rail-btn" aria-label="Launch" data-step="2">
+              <span class="stage-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none">
+                  <path d="M14 30c4-1 8-5 10-10 2 5 6 9 10 10-4 1-8 5-10 10-2-5-6-9-10-10Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+                  <path d="M12 18c3 1 5 3 6 6M30 36c1 3 3 5 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span>Launch</span>
+            </button>
+          </div>
           <div class="stage-stack">
             <article class="stage-card active">
               <span class="stage-index">01</span>
-              <span class="tag">Discover</span>
               <h3>Find the real constraint</h3>
               <p>Goals, audience and what “done” actually looks like.</p>
             </article>
             <article class="stage-card">
               <span class="stage-index">02</span>
-              <span class="tag">Craft</span>
               <h3>Shape the product</h3>
               <p>Interface, content and systems built to stay maintainable.</p>
             </article>
             <article class="stage-card">
               <span class="stage-index">03</span>
-              <span class="tag">Launch</span>
               <h3>Ship, then sharpen</h3>
               <p>Go live cleanly, then improve from real signals.</p>
             </article>
-          </div>
-          <div class="stage-dots" role="tablist" aria-label="Process steps">
-            <button type="button" aria-label="Discover" aria-current="true"></button>
-            <button type="button" aria-label="Craft"></button>
-            <button type="button" aria-label="Launch"></button>
           </div>
         </aside>
       </div>
@@ -183,6 +206,6 @@
       <span>© <span data-year></span> Walnut Rock Technologies</span>
     </div>
   </footer>
-  <script src="js/main.js"></script>
+  <script src="js/main.js?v=3"></script>
 </body>
 </html>
