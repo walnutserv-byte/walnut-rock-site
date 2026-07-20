@@ -171,7 +171,7 @@ function initHeroStage() {
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, w, h);
 
-    // orbiting nodes — denser / different path per step
+    // orbiting nodes, denser / different path per step
     const count = 10 + idx * 4;
     for (let i = 0; i < count; i++) {
       const ang = t * (0.55 + idx * 0.15) + (i / count) * Math.PI * 2;
@@ -277,7 +277,7 @@ function initContactForm() {
       email: String(data.get("email") || ""),
       role: String(data.get("role") || ""),
       message: String(data.get("message") || ""),
-      _subject: "Walnut Rock Technologies — new enquiry",
+      _subject: "Walnut Rock Technologies: new enquiry",
       _template: "table",
     };
 
@@ -292,7 +292,7 @@ function initContactForm() {
       });
       if (!res.ok) throw new Error("send failed");
       form.reset();
-      if (note) note.textContent = "Sent — we’ll get back to you soon.";
+      if (note) note.textContent = "Sent. We’ll get back to you soon.";
     } catch {
       if (note) note.textContent = "Couldn’t send just now. Try again in a moment.";
     } finally {
